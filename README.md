@@ -8,11 +8,11 @@ Program Studi D3 Teknik Informatika, Politeknik Negeri Samarinda.
 
 
 
-\*\*Mahasiswa\*\* : Muhammad Dzulhisyam Izbadillah
+Mahasiswa : Muhammad Dzulhisyam Izbadillah
 
-\*\*NIM\*\*       : 256151053
+NIM       : 256151053
 
-\*\*Kelas\*\*     : 3B
+Kelas     : 3B
 
 
 

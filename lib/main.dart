@@ -1,9 +1,22 @@
 import 'package:flutter/material.dart';
-
+import 'latihan_widget.dart';
+import 'domain/catatan.dart';
 const String namaAplikasi = 'Catatan Polnes';
+
 
 void main() {
   debugPrint('Aplikasi dimulai!');
+
+  final contoh = Catatan(
+    id: '1',
+    judul: 'Belanja bulanan',
+    isi: 'Beli beras, telur, minyak goreng, gula, dan kebutuhan dapur lainnya untuk sebulan',
+    dibuatPada: DateTime.now(),
+  );
+  debugPrint('Map: ${contoh.toMap()}');
+  debugPrint('Ringkasan: ${contoh.ringkasan}');
+  debugPrint('Baru saja: ${contoh.baruSaja}');
+
   runApp(const MyApp());
 }
 
@@ -121,6 +134,8 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               _counter % 2 == 0 ? 'Genap' : 'Ganjil',
             ),
+            const KartuJudul(judul: 'Latihan Stateless vs Stateful'),
+            const TandaiSelesai(),
           ],
         ),
       ),

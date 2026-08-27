@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+
 import 'domain/catatan.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'presentation/catatan_provider.dart';
 import 'presentation/layar_tambah_catatan.dart';
 import 'presentation/router.dart'; // Tambahan import untuk peta navigasi
+
 import 'package:go_router/go_router.dart'; // Tambahan import untuk context.push
 
 const String namaAplikasi = 'Catatan Polnes';
@@ -84,7 +88,9 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                   action: SnackBarAction(
                     label: 'Urungkan',
                     onPressed: () {
-                      ref.read(catatanProvider.notifier).tambahKembali(catatan, index);
+                      ref
+                          .read(catatanProvider.notifier)
+                          .tambahKembali(catatan, index);
                     },
                   ),
                 ),

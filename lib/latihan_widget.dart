@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class KartuJudul extends StatelessWidget {
-
   final String judul;
 
   const KartuJudul({super.key, required this.judul});
@@ -16,6 +15,7 @@ class KartuJudul extends StatelessWidget {
     );
   }
 }
+
 class TandaiSelesai extends StatefulWidget {
   const TandaiSelesai({super.key});
 

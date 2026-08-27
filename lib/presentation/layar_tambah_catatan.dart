@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../domain/catatan.dart';
 import 'catatan_provider.dart';
 
@@ -67,10 +68,7 @@ class _LayarTambahCatatanState extends ConsumerState<LayarTambahCatatan> {
                 },
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _simpan,
-                child: const Text('Simpan'),
-              ),
+              ElevatedButton(onPressed: _simpan, child: const Text('Simpan')),
             ],
           ),
         ),

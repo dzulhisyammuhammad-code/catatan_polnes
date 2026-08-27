@@ -19,6 +19,11 @@ class CatatanNotifier extends Notifier<List<Catatan>> {
     ref.read(catatanRepositoryProvider).hapus(id);
     state = ref.read(catatanRepositoryProvider).semua();
   }
+
+  void tambahKembali(Catatan catatan, int index) {
+    ref.read(catatanRepositoryProvider).tambah(catatan);
+    state = ref.read(catatanRepositoryProvider).semua();
+  }
 }
 
 final catatanProvider = NotifierProvider<CatatanNotifier, List<Catatan>>(

@@ -68,13 +68,35 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
         itemCount: daftarCatatan.length,
         itemBuilder: (context, index) {
           final catatan = daftarCatatan[index];
-          return ListTile(
-            title: Text(catatan.judul),
-            subtitle: Text(catatan.ringkasan),
-            onTap: () {
-              // Navigasi dengan go_router membawa objek catatan
-              context.push('/detail', extra: catatan);
+          return Dismissible(
+            key: Key(catatan.id),
+            background: Container(
+              color: Colors.red,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: const Icon(Icons.delete, color: Colors.white),
+            ),
+            onDismissed: (direction) {
+              ref.read(catatanProvider.notifier).hapus(catatan.id);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('${catatan.judul} dihapus'),
+                  action: SnackBarAction(
+                    label: 'Urungkan',
+                    onPressed: () {
+                      ref.read(catatanProvider.notifier).tambahKembali(catatan, index);
+                    },
+                  ),
+                ),
+              );
             },
+            child: ListTile(
+              title: Text(catatan.judul),
+              subtitle: Text(catatan.ringkasan),
+              onTap: () {
+                context.push('/detail', extra: catatan);
+              },
+            ),
           );
         },
       ),

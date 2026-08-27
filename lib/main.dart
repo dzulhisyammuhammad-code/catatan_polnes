@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'domain/catatan.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'presentation/catatan_provider.dart';
+import 'presentation/layar_tambah_catatan.dart';
+import 'presentation/router.dart'; // Tambahan import untuk peta navigasi
+import 'package:go_router/go_router.dart'; // Tambahan import untuk context.push
 
 const String namaAplikasi = 'Catatan Polnes';
 
@@ -26,12 +29,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF143D6B)),
       ),
-      home: const MyHomePage(title: 'Muhammad Dzulhisyam Izbadillah - 256151053'),
+      routerConfig: router, // Menggunakan konfigurasi router.dart
     );
   }
 }
@@ -68,11 +71,20 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
           return ListTile(
             title: Text(catatan.judul),
             subtitle: Text(catatan.ringkasan),
+            onTap: () {
+              // Navigasi dengan go_router membawa objek catatan
+              context.push('/detail', extra: catatan);
+            },
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const LayarTambahCatatan()),
+          );
+        },
         child: const Icon(Icons.add),
       ),
     );

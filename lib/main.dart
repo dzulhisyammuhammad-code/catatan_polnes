@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'presentation/catatan_provider.dart';
 import 'presentation/layar_tambah_catatan.dart';
 import 'presentation/router.dart'; // Tambahan import untuk peta navigasi
+import 'presentation/theme/app_theme.dart'; // Tambahan import untuk tema
 
 import 'package:go_router/go_router.dart'; // Tambahan import untuk context.push
 
@@ -34,10 +35,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF143D6B)),
-      ),
+      title: 'Catatan POLNES',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.terang(),
+      darkTheme: AppTheme.gelap(),
+      themeMode: ThemeMode.system, // Otomatis mengikuti mode HP pengguna
       routerConfig: router, // Menggunakan konfigurasi router.dart
     );
   }

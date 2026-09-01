@@ -10,7 +10,7 @@ import 'presentation/router.dart'; // Tambahan import untuk peta navigasi
 import 'presentation/theme/app_theme.dart'; // Tambahan import untuk tema
 
 import 'package:go_router/go_router.dart'; // Tambahan import untuk context.push
-
+import 'presentation/theme/tokens.dart';
 const String namaAplikasi = 'Catatan Polnes';
 
 void main() {
@@ -77,10 +77,10 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
           return Dismissible(
             key: Key(catatan.id),
             background: Container(
-              color: Colors.red,
+              color: Theme.of(context).colorScheme.error,
               alignment: Alignment.centerRight,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: const Icon(Icons.delete, color: Colors.white),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+              child: Icon(Icons.delete, color: Theme.of(context).colorScheme.onError),
             ),
             onDismissed: (direction) {
               ref.read(catatanProvider.notifier).hapus(catatan.id);

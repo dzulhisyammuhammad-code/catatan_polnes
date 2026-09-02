@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/catatan.dart';
 import 'catatan_provider.dart';
+import 'theme/tokens.dart';
 
 class LayarTambahCatatan extends ConsumerStatefulWidget {
   const LayarTambahCatatan({super.key});
@@ -41,7 +42,7 @@ class _LayarTambahCatatanState extends ConsumerState<LayarTambahCatatan> {
     return Scaffold(
       appBar: AppBar(title: const Text('Tambah Catatan')),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.md),
         child: Form(
           key: _formKey,
           child: Column(
@@ -67,7 +68,7 @@ class _LayarTambahCatatanState extends ConsumerState<LayarTambahCatatan> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.md),
               ElevatedButton(onPressed: _simpan, child: const Text('Simpan')),
             ],
           ),

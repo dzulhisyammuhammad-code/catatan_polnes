@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../domain/catatan.dart';
+import 'theme/tokens.dart';
 
 class LayarDetailCatatan extends StatelessWidget {
   final Catatan catatan;
@@ -12,12 +13,12 @@ class LayarDetailCatatan extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(catatan.judul)),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(catatan.isi, style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.md),
             Text('Dibuat: ${catatan.dibuatPada}'),
             Text('Status: ${catatan.selesai ? "Selesai" : "Belum selesai"}'),
           ],

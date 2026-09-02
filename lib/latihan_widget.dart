@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:catatan_polnes/presentation/theme/tokens.dart';
 
 class KartuJudul extends StatelessWidget {
   final String judul;
@@ -9,7 +10,7 @@ class KartuJudul extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.md),
         child: Text(judul, style: const TextStyle(fontSize: 18)),
       ),
     );

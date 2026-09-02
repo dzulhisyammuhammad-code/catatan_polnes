@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 
 import 'domain/catatan.dart';
+import 'domain/hasil_catatan.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'presentation/catatan_provider.dart';
 import 'presentation/layar_tambah_catatan.dart';
-import 'presentation/router.dart'; // Tambahan import untuk peta navigasi
-import 'presentation/theme/app_theme.dart'; // Tambahan import untuk tema
+import 'presentation/layar_detail_catatan.dart';
+import 'presentation/layar/beranda_responsif.dart';
+import 'presentation/router.dart';
+import 'presentation/theme/app_theme.dart';
+import 'presentation/theme/tokens.dart';
 
-import 'package:go_router/go_router.dart'; // Tambahan import untuk context.push
+import 'presentation/widget/keadaan_kosong.dart';
+import 'presentation/widget/skeleton_daftar.dart';
 
 const String namaAplikasi = 'Catatan Polnes';
 
@@ -39,8 +44,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.terang(),
       darkTheme: AppTheme.gelap(),
-      themeMode: ThemeMode.system, // Otomatis mengikuti mode HP pengguna
-      routerConfig: router, // Menggunakan konfigurasi router.dart
+      themeMode: ThemeMode.system,
+      routerConfig: router,
     );
   }
 }
@@ -55,6 +60,8 @@ class MyHomePage extends ConsumerStatefulWidget {
 }
 
 class _MyHomePageState extends ConsumerState<MyHomePage> {
+  Catatan? _catatanTerpilih;
+
   @override
   void initState() {
     super.initState();
@@ -63,51 +70,38 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final daftarCatatan = ref.watch(catatanProvider);
+    final hasil = ref.watch(catatanProvider);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: ListView.builder(
-        itemCount: daftarCatatan.length,
-        itemBuilder: (context, index) {
-          final catatan = daftarCatatan[index];
-          return Dismissible(
-            key: Key(catatan.id),
-            background: Container(
-              color: Colors.red,
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: const Icon(Icons.delete, color: Colors.white),
-            ),
-            onDismissed: (direction) {
-              ref.read(catatanProvider.notifier).hapus(catatan.id);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('${catatan.judul} dihapus'),
-                  action: SnackBarAction(
-                    label: 'Urungkan',
-                    onPressed: () {
-                      ref
-                          .read(catatanProvider.notifier)
-                          .tambahKembali(catatan, index);
-                    },
-                  ),
-                ),
-              );
-            },
-            child: ListTile(
-              title: Text(catatan.judul),
-              subtitle: Text(catatan.ringkasan),
-              onTap: () {
-                context.push('/detail', extra: catatan);
-              },
-            ),
-          );
-        },
-      ),
+      body: switch (hasil) {
+        HasilMemuat() => const SkeletonDaftar(),
+        HasilKosong() => const KeadaanKosong(
+          ikon: Icons.note_add_outlined,
+          judul: 'Belum ada catatan',
+          penjelasan: 'Ketuk tombol + untuk menambah catatan pertamamu.',
+        ),
+        HasilGalat(pesan: final pesan) => KeadaanKosong(
+          ikon: Icons.error_outline,
+          judul: 'Terjadi kesalahan',
+          penjelasan: pesan,
+          // Komentari sementara karena belum ada method muatUlang()
+          // labelAksi: 'Coba lagi',
+          // onAksi: () => ref.read(catatanProvider.notifier).muatUlang(),
+        ),
+        HasilSebagian(data: final data, peringatan: final peringatan) =>
+          BerandaResponsif(
+            daftar: _daftarCatatan(context, data, peringatan: peringatan),
+            detail: _panelDetail(context),
+          ),
+        HasilBerhasil(data: final data) => BerandaResponsif(
+          daftar: _daftarCatatan(context, data),
+          detail: _panelDetail(context),
+        ),
+      },
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -115,8 +109,93 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
             MaterialPageRoute(builder: (context) => const LayarTambahCatatan()),
           );
         },
+        tooltip: 'Tambah catatan', // 1. Penambahan Tooltip
         child: const Icon(Icons.add),
       ),
     );
+  }
+
+  Widget _daftarCatatan(
+    BuildContext context,
+    List<Catatan> daftarCatatan, {
+    String? peringatan,
+  }) {
+    return Column(
+      children: [
+        if (peringatan != null)
+          Container(
+            width: double.infinity,
+            color: Theme.of(context).colorScheme.errorContainer,
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            child: Text(peringatan),
+          ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: daftarCatatan.length,
+            itemBuilder: (context, index) {
+              final catatan = daftarCatatan[index];
+              return Dismissible(
+                key: Key(catatan.id),
+                background: Container(
+                  color: Theme.of(context).colorScheme.error,
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                  ),
+                  // 2. Semantics untuk indikator Hapus Catatan
+                  child: Semantics(
+                    label: 'Hapus catatan',
+                    child: Icon(
+                      Icons.delete,
+                      color: Theme.of(context).colorScheme.onError,
+                    ),
+                  ),
+                ),
+                onDismissed: (direction) {
+                  ref.read(catatanProvider.notifier).hapus(catatan.id);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('${catatan.judul} dihapus'),
+                      action: SnackBarAction(
+                        label: 'Urungkan',
+                        onPressed: () {
+                          ref
+                              .read(catatanProvider.notifier)
+                              .tambahKembali(catatan, index);
+                        },
+                      ),
+                    ),
+                  );
+                },
+                // 3. Semantics membungkus ListTile untuk pembaca layar
+                child: Semantics(
+                  label: 'Catatan: ${catatan.judul}. ${catatan.ringkasan}',
+                  child: ListTile(
+                    title: Text(catatan.judul),
+                    subtitle: Text(catatan.ringkasan),
+                    onTap: () {
+                      _catatanTerpilih = catatan;
+                      setState(() {});
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _panelDetail(BuildContext context) {
+    final catatan = _catatanTerpilih;
+    if (catatan == null) {
+      return const KeadaanKosong(
+        ikon: Icons.description_outlined,
+        judul: 'Pilih catatan',
+        penjelasan: 'Ketuk salah satu catatan di daftar untuk melihat detailnya di sini.',
+      );
+    }
+    return LayarDetailCatatan(catatan: catatan);
   }
 }

@@ -7,8 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'presentation/catatan_provider.dart';
 import 'presentation/layar_tambah_catatan.dart';
-import 'presentation/layar_detail_catatan.dart'; // Tambahan import
-import 'presentation/layar/beranda_responsif.dart'; // Tambahan import
+import 'presentation/layar_detail_catatan.dart';
+import 'presentation/layar/beranda_responsif.dart';
 import 'presentation/router.dart';
 import 'presentation/theme/app_theme.dart';
 import 'presentation/theme/tokens.dart';
@@ -109,6 +109,7 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
             MaterialPageRoute(builder: (context) => const LayarTambahCatatan()),
           );
         },
+        tooltip: 'Tambah catatan', // 1. Penambahan Tooltip
         child: const Icon(Icons.add),
       ),
     );
@@ -141,9 +142,13 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                   padding: const EdgeInsets.symmetric(
                     horizontal: AppSpacing.lg,
                   ),
-                  child: Icon(
-                    Icons.delete,
-                    color: Theme.of(context).colorScheme.onError,
+                  // 2. Semantics untuk indikator Hapus Catatan
+                  child: Semantics(
+                    label: 'Hapus catatan',
+                    child: Icon(
+                      Icons.delete,
+                      color: Theme.of(context).colorScheme.onError,
+                    ),
                   ),
                 ),
                 onDismissed: (direction) {
@@ -162,13 +167,17 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                     ),
                   );
                 },
-                child: ListTile(
-                  title: Text(catatan.judul),
-                  subtitle: Text(catatan.ringkasan),
-                  onTap: () {
-                    _catatanTerpilih = catatan;
-                    setState(() {});
-                  },
+                // 3. Semantics membungkus ListTile untuk pembaca layar
+                child: Semantics(
+                  label: 'Catatan: ${catatan.judul}. ${catatan.ringkasan}',
+                  child: ListTile(
+                    title: Text(catatan.judul),
+                    subtitle: Text(catatan.ringkasan),
+                    onTap: () {
+                      _catatanTerpilih = catatan;
+                      setState(() {});
+                    },
+                  ),
                 ),
               );
             },

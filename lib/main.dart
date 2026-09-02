@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
 import 'domain/catatan.dart';
-import 'domain/hasil_catatan.dart'; // Tambahan import
+import 'domain/hasil_catatan.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'presentation/catatan_provider.dart';
 import 'presentation/layar_tambah_catatan.dart';
+import 'presentation/layar_detail_catatan.dart'; // Tambahan import
+import 'presentation/layar/beranda_responsif.dart'; // Tambahan import
 import 'presentation/router.dart';
 import 'presentation/theme/app_theme.dart';
 import 'presentation/theme/tokens.dart';
 
-import 'presentation/widget/keadaan_kosong.dart'; // Tambahan import
-import 'presentation/widget/skeleton_daftar.dart'; // Tambahan import
-
-import 'package:go_router/go_router.dart';
+import 'presentation/widget/keadaan_kosong.dart';
+import 'presentation/widget/skeleton_daftar.dart';
 
 const String namaAplikasi = 'Catatan Polnes';
 
@@ -60,6 +60,8 @@ class MyHomePage extends ConsumerStatefulWidget {
 }
 
 class _MyHomePageState extends ConsumerState<MyHomePage> {
+  Catatan? _catatanTerpilih;
+
   @override
   void initState() {
     super.initState();
@@ -86,13 +88,19 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
           ikon: Icons.error_outline,
           judul: 'Terjadi kesalahan',
           penjelasan: pesan,
-          labelAksi: 'Coba lagi',
           // Komentari sementara karena belum ada method muatUlang()
+          // labelAksi: 'Coba lagi',
           // onAksi: () => ref.read(catatanProvider.notifier).muatUlang(),
         ),
         HasilSebagian(data: final data, peringatan: final peringatan) =>
-          _daftarCatatan(context, data, peringatan: peringatan),
-        HasilBerhasil(data: final data) => _daftarCatatan(context, data),
+          BerandaResponsif(
+            daftar: _daftarCatatan(context, data, peringatan: peringatan),
+            detail: _panelDetail(context),
+          ),
+        HasilBerhasil(data: final data) => BerandaResponsif(
+          daftar: _daftarCatatan(context, data),
+          detail: _panelDetail(context),
+        ),
       },
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -158,7 +166,8 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
                   title: Text(catatan.judul),
                   subtitle: Text(catatan.ringkasan),
                   onTap: () {
-                    context.push('/detail', extra: catatan);
+                    _catatanTerpilih = catatan;
+                    setState(() {});
                   },
                 ),
               );
@@ -167,5 +176,17 @@ class _MyHomePageState extends ConsumerState<MyHomePage> {
         ),
       ],
     );
+  }
+
+  Widget _panelDetail(BuildContext context) {
+    final catatan = _catatanTerpilih;
+    if (catatan == null) {
+      return const KeadaanKosong(
+        ikon: Icons.description_outlined,
+        judul: 'Pilih catatan',
+        penjelasan: 'Ketuk salah satu catatan di daftar untuk melihat detailnya di sini.',
+      );
+    }
+    return LayarDetailCatatan(catatan: catatan);
   }
 }
